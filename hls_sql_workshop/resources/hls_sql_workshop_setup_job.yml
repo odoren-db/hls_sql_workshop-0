@@ -1,0 +1,49 @@
+resources:
+  jobs:
+    hls_sql_workshop_setup:
+      name: hls_sql_workshop_setup
+      tasks:
+        - task_key: uc_setup
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/uc_setup.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              volume: ${var.volume}
+            source: WORKSPACE
+        - task_key: dlt_etl
+          depends_on:
+            - task_key: uc_setup
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.hls_sql_workshop_pipeline.id}
+            full_refresh: false
+        - task_key: copy_gold_tables_add_metadata
+          depends_on:
+            - task_key: dlt_etl
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/gold_copy_tables_add_metadata.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+            source: WORKSPACE
+        - task_key: build_training_and_scoring_tables
+          depends_on:
+            - task_key: copy_gold_tables_add_metadata
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/ml/build_training_and_scoring_tables.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+            source: WORKSPACE
+        - task_key: build_feature_store_beneficiary
+          depends_on:
+            - task_key: build_training_and_scoring_tables
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/ml/build_feature_store_beneficiary_table.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+            source: WORKSPACE                        
+      queue:
+        enabled: true
+      tags:
+        industry: hls        
+        purpose: sql_workshop

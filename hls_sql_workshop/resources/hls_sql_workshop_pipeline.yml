@@ -1,0 +1,25 @@
+resources:
+  pipelines:
+    hls_sql_workshop_pipeline:
+      name: hls_sql_workshop_pipeline
+      target: ${var.schema}
+      configuration:
+        pipeline.catalog: ${var.catalog}
+        pipeline.volume_path: /Volumes/${var.catalog}/${var.schema}/raw_files/medicare_claims
+        bundle.sourcePath: /Workspace/${workspace.file_path}/src
+      libraries:
+        - notebook:
+            path: ../src/dlt/01_bronze_load_tables.ipynb
+        - notebook:
+            path: ../src/dlt/02_silver_load_tables.sql
+        - notebook:
+            path: ../src/dlt/03_gold_load_tables.sql
+      development: true
+      photon: true
+      catalog: ${var.catalog}
+      serverless: true
+      data_sampling: false
+      tags:
+        industry: hls        
+        purpose: sql_workshop
+        
