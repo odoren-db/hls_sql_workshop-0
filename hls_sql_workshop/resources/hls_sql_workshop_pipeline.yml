@@ -2,7 +2,7 @@ resources:
   pipelines:
     hls_sql_workshop_pipeline:
       name: hls_sql_workshop_pipeline
-      target: ${var.schema}
+      target: ${var.schema}    
       configuration:
         pipeline.catalog: ${var.catalog}
         pipeline.volume_path: /Volumes/${var.catalog}/${var.schema}/raw_files/medicare_claims

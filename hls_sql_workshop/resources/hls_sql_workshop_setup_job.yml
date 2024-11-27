@@ -30,7 +30,7 @@ resources:
           depends_on:
             - task_key: copy_gold_tables_add_metadata
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/build_training_and_scoring_tables.ipynb
+            notebook_path: ../src/notebooks/setup/ml/01_build_scoring_tables.ipynb
             base_parameters:
               catalog: ${var.catalog}
             source: WORKSPACE
@@ -38,12 +38,36 @@ resources:
           depends_on:
             - task_key: build_training_and_scoring_tables
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/build_feature_store_beneficiary_table.ipynb
+            notebook_path: ../src/notebooks/setup/ml/02_build_training_dataset.ipynb
             base_parameters:
               catalog: ${var.catalog}
-            source: WORKSPACE                        
+            source: WORKSPACE 
+        - task_key: automl_train_and_register_model 
+          depends_on:
+            - task_key: build_feature_store_beneficiary
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/ml/03_automl_train_and_register_model.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+            source: WORKSPACE
+        - task_key: create_online_table
+          depends_on:
+            - task_key: automl_train_and_register_model
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/ml/04_create_online_table.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+            source: WORKSPACE
+        - task_key: create_serving_endpoint
+          depends_on:
+            - task_key: create_online_table
+          notebook_task:
+            notebook_path: ../src/notebooks/setup/ml/05_create_serving_endpoint.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+            source: WORKSPACE
       queue:
         enabled: true
       tags:
-        industry: hls        
+        industry: hls
         purpose: sql_workshop
