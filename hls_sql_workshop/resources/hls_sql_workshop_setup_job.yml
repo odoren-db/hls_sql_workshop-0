@@ -5,7 +5,7 @@ resources:
       tasks:
         - task_key: uc_setup
           notebook_task:
-            notebook_path: ../src/notebooks/setup/uc_setup.ipynb
+            notebook_path: ../src/notebooks/setup/uc_setup.py
             base_parameters:
               schema: ${var.schema}
               volume: ${var.volume}
@@ -14,7 +14,7 @@ resources:
           depends_on:
             - task_key: uc_setup       
           notebook_task:
-            notebook_path: ../src/notebooks/setup/copy_files_to_volume.ipynb
+            notebook_path: ../src/notebooks/setup/copy_files_to_volume.py
             base_parameters:
               schema: ${var.schema}
               volume: ${var.volume}
@@ -29,7 +29,7 @@ resources:
           depends_on:
             - task_key: dlt_etl
           notebook_task:
-            notebook_path: ../src/notebooks/setup/gold_copy_tables_add_metadata.ipynb
+            notebook_path: ../src/notebooks/setup/gold_copy_tables_add_metadata.py
             base_parameters:
               schema: ${var.schema}
             source: WORKSPACE
@@ -37,7 +37,7 @@ resources:
           depends_on:
             - task_key: copy_gold_tables_add_metadata
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/01_build_training_dataset.ipynb
+            notebook_path: ../src/notebooks/setup/ml/01_build_training_dataset.py
             source: WORKSPACE 
         - task_key: ml_train_and_register_model 
           depends_on:
@@ -50,14 +50,14 @@ resources:
           depends_on:
             - task_key: ml_train_and_register_model 
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/03_create_online_table.ipynb
+            notebook_path: ../src/notebooks/setup/ml/03_create_online_table.py
             source: WORKSPACE
           job_cluster_key: ml_job_cluster            
         - task_key: create_serving_endpoint
           depends_on:
             - task_key: create_online_table
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/04_create_serving_endpoint.ipynb
+            notebook_path: ../src/notebooks/setup/ml/04_create_serving_endpoint.py
             source: WORKSPACE
           job_cluster_key: ml_job_cluster  
       job_clusters:
