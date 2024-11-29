@@ -21,7 +21,7 @@ variables:
     description: The target schema for bronze, silver, and gold data
     default: cms
   volume: 
-    description: The volume to load files from
+    description: The volume to create to load raw data files into
     default: raw_files    
   
 targets:
@@ -33,16 +33,16 @@ targets:
     # - The 'development' mode is used for Delta Live Tables pipelines
     mode: development
     default: true
-    variables:
-      catalog: ddavis_hls_sql
-      schema: cms
-      volume: raw_files
     workspace:
       host: https://e2-demo-field-eng.cloud.databricks.com
+    resources:
+      pipelines:
+        hls_sql_workshop_pipeline:
+          serverless: true
 
 
   # The 'aws' target, used for production deployment.
-  aws:
+  aws-classic-compute:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
     mode: development
@@ -72,9 +72,35 @@ targets:
               data_security_mode: SINGLE_USER
               runtime_engine: PHOTON
               num_workers: 4
+          - job_cluster_key: ml_job_cluster
+            new_cluster:
+              cluster_name: ""
+              spark_version: 15.4.x-scala2.12
+              aws_attributes:
+                first_on_demand: 1
+                availability: SPOT_WITH_FALLBACK
+                spot_bid_price_percent: 100
+                ebs_volume_count: 0
+              node_type_id: r6id.xlarge
+              spark_env_vars:
+                PYSPARK_PYTHON: /databricks/python3/bin/python3
+              enable_elastic_disk: false
+              data_security_mode: SINGLE_USER
+              runtime_engine: PHOTON
+              num_workers: 4           
+      pipelines:
+        hls_sql_workshop_pipeline:
+          clusters:
+          - label: default
+            aws_attributes:
+              availability: ON_DEMAND
+            autoscale:
+              min_workers: 1
+              max_workers: 4
+              mode: ENHANCED                  
 
   # The 'azure' target, used for production deployment.
-  azure:
+  azure-classic-compute:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
     mode: development
@@ -102,4 +128,27 @@ targets:
               enable_elastic_disk: true
               data_security_mode: SINGLE_USER
               runtime_engine: PHOTON
-              num_workers: 4           
+              num_workers: 4
+          - job_cluster_key: dbr_job_cluster
+            new_cluster:
+              cluster_name: ""
+              spark_version: 15.4.x-scala2.12
+              azure_attributes:
+                first_on_demand: 1
+                availability: ON_DEMAND_AZURE
+                spot_bid_max_price: -1
+              node_type_id: Standard_D4ds_v5
+              spark_env_vars:
+                PYSPARK_PYTHON: /databricks/python3/bin/python3
+              enable_elastic_disk: true
+              data_security_mode: SINGLE_USER
+              runtime_engine: PHOTON
+              num_workers: 4
+      pipelines:
+        hls_sql_workshop_pipeline:
+          clusters:
+          - label: default
+            autoscale:
+              min_workers: 1
+              max_workers: 4
+              mode: ENHANCED                                  
