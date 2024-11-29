@@ -30,9 +30,20 @@ from databricks.feature_engineering import FeatureLookup, FeatureEngineeringClie
 
 # COMMAND ----------
 
+dbutils.widgets.text('catalog','ddavis_hls_sql')
+catalog = dbutils.widgets.get('catalog')
+print(f'catalog = {catalog}')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC use catalog ${catalog}.ai;
+
+# COMMAND ----------
+
 # DBTITLE 1,load data
 # load training data
-df = spark.table(f'ddavis_hls_sql.ai.training_beneficiary')
+df = spark.table(f'{catalog}.ai.training_beneficiary')
 training_data = df.select('beneficiary_code', 'claim_amount')
 
 # Initialize Feature Store Client
@@ -41,7 +52,7 @@ fs = FeatureStoreClient()
 # feature lookup
 feature_lookups = [
     FeatureLookup(
-      table_name='ddavis_hls_sql.ai.feature_beneficiary',
+      table_name=f'{catalog}.ai.feature_beneficiary',
       lookup_key='beneficiary_code'
     )]
 
@@ -173,7 +184,7 @@ with mlflow.start_run(run_name='my_sample_run') as run:
 
 # DBTITLE 1,register model
 # register_model
-model_name = 'ddavis_hls_sql.ai.sample_model'
+model_name = f'{catalog}.ai.predict_claims_amount_model'
 run_id = run.info.run_id
 model_uri = f"runs:/{run_id}/model"
 model_registered = mlflow.register_model(model_uri=model_uri, name=model_name)
