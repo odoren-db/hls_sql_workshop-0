@@ -13,23 +13,6 @@ print(f'catalog = {catalog}')
 # MAGIC %sql
 # MAGIC CREATE OR REPLACE TABLE ai.training_beneficiary(
 # MAGIC     beneficiary_code string not null
-# MAGIC     ,date_of_birth date
-# MAGIC     ,date_of_death date
-# MAGIC     ,gender string
-# MAGIC     ,race string
-# MAGIC     ,esrd_flag string
-# MAGIC     ,state string
-# MAGIC     ,county_code string
-# MAGIC     ,heart_failure_flag string
-# MAGIC     ,cronic_kidney_disease_flag string
-# MAGIC     ,cancer_flag string
-# MAGIC     ,copd_flag string
-# MAGIC     ,depression_flag string
-# MAGIC     ,diabetes_flag string
-# MAGIC     ,ischemic_heart_disease_flag string
-# MAGIC     ,osteoporosis_flag string
-# MAGIC     ,asrheumatoid_arthritis_flag string
-# MAGIC     ,stroke_transient_ischemic_attack_flag string
 # MAGIC     ,claim_amount double
 # MAGIC     ,CONSTRAINT training_beneficiary_pk PRIMARY KEY(beneficiary_code)
 # MAGIC )
@@ -42,23 +25,6 @@ print(f'catalog = {catalog}')
 # MAGIC as
 # MAGIC SELECT
 # MAGIC     a.beneficiary_code,
-# MAGIC     a.date_of_birth,
-# MAGIC     a.date_of_death,
-# MAGIC     a.gender,
-# MAGIC     a.race,
-# MAGIC     a.esrd_flag,
-# MAGIC     a.state,
-# MAGIC     a.county_code,
-# MAGIC     a.heart_failure_flag,
-# MAGIC     a.cronic_kidney_disease_flag,
-# MAGIC     a.cancer_flag,
-# MAGIC     a.copd_flag,
-# MAGIC     a.depression_flag,
-# MAGIC     a.diabetes_flag,
-# MAGIC     a.ischemic_heart_disease_flag,
-# MAGIC     a.osteoporosis_flag,
-# MAGIC     a.asrheumatoid_arthritis_flag,
-# MAGIC     a.stroke_transient_ischemic_attack_flag,
 # MAGIC     b.claim_amount
 # MAGIC FROM
 # MAGIC     cms.gold_dim_beneficiary AS a
@@ -97,23 +63,22 @@ print(f'catalog = {catalog}')
 # MAGIC %sql
 # MAGIC CREATE OR REPLACE TABLE ai.feature_beneficiary(
 # MAGIC     beneficiary_code string not null
-# MAGIC     ,date_of_birth date
-# MAGIC     ,date_of_death date
+# MAGIC     ,deceased_flag int
 # MAGIC     ,gender string
 # MAGIC     ,race string
-# MAGIC     ,esrd_flag string
+# MAGIC     ,esrd_flag int
 # MAGIC     ,state string
 # MAGIC     ,county_code string
-# MAGIC     ,heart_failure_flag string
-# MAGIC     ,cronic_kidney_disease_flag string
-# MAGIC     ,cancer_flag string
-# MAGIC     ,copd_flag string
-# MAGIC     ,depression_flag string
-# MAGIC     ,diabetes_flag string
-# MAGIC     ,ischemic_heart_disease_flag string
-# MAGIC     ,osteoporosis_flag string
-# MAGIC     ,asrheumatoid_arthritis_flag string
-# MAGIC     ,stroke_transient_ischemic_attack_flag string
+# MAGIC     ,heart_failure_flag int
+# MAGIC     ,cronic_kidney_disease_flag int
+# MAGIC     ,cancer_flag int
+# MAGIC     ,copd_flag int
+# MAGIC     ,depression_flag int
+# MAGIC     ,diabetes_flag int
+# MAGIC     ,ischemic_heart_disease_flag int
+# MAGIC     ,osteoporosis_flag int
+# MAGIC     ,asrheumatoid_arthritis_flag int
+# MAGIC     ,stroke_transient_ischemic_attack_flag int
 # MAGIC     ,CONSTRAINT feature_beneficiary_pk PRIMARY KEY(beneficiary_code)
 # MAGIC )
 # MAGIC TBLPROPERTIES (delta.enableChangeDataFeed = true);
@@ -124,24 +89,22 @@ print(f'catalog = {catalog}')
 # MAGIC CREATE OR REPLACE TEMP VIEW vw_feature_beneficiary as 
 # MAGIC SELECT
 # MAGIC     a.beneficiary_code,
-# MAGIC     a.date_of_birth,
-# MAGIC     a.date_of_death,
-# MAGIC     a.gender,
+# MAGIC     CASE WHEN a.date_of_death IS NULL THEN 0 ELSE 1 END AS deceased_flag,
+# MAGIC     CASE WHEN a.gender = 'No' THEN 0 ELSE 1 END AS gender,
 # MAGIC     a.race,
-# MAGIC     a.esrd_flag,
+# MAGIC     CASE WHEN a.esrd_flag = 'No' THEN 0 ELSE 1 END AS esrd_flag,
 # MAGIC     a.state,
 # MAGIC     a.county_code,
-# MAGIC     a.heart_failure_flag,
-# MAGIC     a.cronic_kidney_disease_flag,
-# MAGIC     a.cancer_flag,
-# MAGIC     a.copd_flag,
-# MAGIC     a.depression_flag,
-# MAGIC     a.diabetes_flag,
-# MAGIC     a.ischemic_heart_disease_flag,
-# MAGIC     a.osteoporosis_flag,
-# MAGIC     a.asrheumatoid_arthritis_flag,
-# MAGIC     a.stroke_transient_ischemic_attack_flag,
-# MAGIC     b.claim_amount
+# MAGIC     CASE WHEN a.heart_failure_flag = 'No' THEN 0 ELSE 1 END AS heart_failure_flag,
+# MAGIC     CASE WHEN a.cronic_kidney_disease_flag = 'No' THEN 0 ELSE 1 END AS cronic_kidney_disease_flag,
+# MAGIC     CASE WHEN a.cancer_flag = 'No' THEN 0 ELSE 1 END AS cancer_flag,
+# MAGIC     CASE WHEN a.copd_flag = 'No' THEN 0 ELSE 1 END AS copd_flag,
+# MAGIC     CASE WHEN a.depression_flag = 'No' THEN 0 ELSE 1 END AS depression_flag,
+# MAGIC     CASE WHEN a.diabetes_flag = 'No' THEN 0 ELSE 1 END AS diabetes_flag,
+# MAGIC     CASE WHEN a.ischemic_heart_disease_flag = 'No' THEN 0 ELSE 1 END AS ischemic_heart_disease_flag,
+# MAGIC     CASE WHEN a.osteoporosis_flag = 'No' THEN 0 ELSE 1 END AS osteoporosis_flag,
+# MAGIC     CASE WHEN a.asrheumatoid_arthritis_flag = 'No' THEN 0 ELSE 1 END AS asrheumatoid_arthritis_flag,
+# MAGIC     CASE WHEN a.stroke_transient_ischemic_attack_flag = 'No' THEN 0 ELSE 1 END AS stroke_transient_ischemic_attack_flag
 # MAGIC FROM
 # MAGIC     cms.gold_dim_beneficiary AS a
 # MAGIC INNER JOIN (
