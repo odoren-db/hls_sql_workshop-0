@@ -1,4 +1,9 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC this notebook can be run on serverless compute
+
+# COMMAND ----------
+
 # MAGIC %pip install mlflow
 
 # COMMAND ----------
@@ -165,7 +170,7 @@ print(f"Model Metrics:\n - MSE: {mse:.2f}\n - MAE: {mae:.2f}\n - R2: {r2:.2f}")
 input_sample = X_test[all_features].iloc[:1]
 signature = infer_signature(input_sample, model.predict(input_sample))
 
-with mlflow.start_run(run_name='my_sample_run') as run:
+with mlflow.start_run(run_name='hls_sql_claims_amount') as run:
     # Log model
     mlflow.sklearn.log_model(model, "model", signature=signature)
     
