@@ -33,37 +33,31 @@ resources:
             base_parameters:
               schema: ${var.schema}
             source: WORKSPACE
-        - task_key: build_training_and_scoring_tables
+        - task_key: build_feature_store_beneficiary
           depends_on:
             - task_key: copy_gold_tables_add_metadata
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/01_build_scoring_tables.ipynb
-            source: WORKSPACE
-        - task_key: build_feature_store_beneficiary
-          depends_on:
-            - task_key: build_training_and_scoring_tables
-          notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/02_build_training_dataset.ipynb
+            notebook_path: ../src/notebooks/setup/ml/01_build_training_dataset.ipynb
             source: WORKSPACE 
-        - task_key: automl_train_and_register_model 
+        - task_key: ml_train_and_register_model 
           depends_on:
             - task_key: build_feature_store_beneficiary
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/03_automl_train_and_register_model.ipynb
+            notebook_path: ../src/notebooks/setup/ml/02_ml_train_and_register_model.py
             source: WORKSPACE
           job_cluster_key: ml_job_cluster  
         - task_key: create_online_table
           depends_on:
-            - task_key: automl_train_and_register_model
+            - task_key: ml_train_and_register_model 
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/04_create_online_table.ipynb
+            notebook_path: ../src/notebooks/setup/ml/03_create_online_table.ipynb
             source: WORKSPACE
           job_cluster_key: ml_job_cluster            
         - task_key: create_serving_endpoint
           depends_on:
             - task_key: create_online_table
           notebook_task:
-            notebook_path: ../src/notebooks/setup/ml/05_create_serving_endpoint.ipynb
+            notebook_path: ../src/notebooks/setup/ml/04_create_serving_endpoint.ipynb
             source: WORKSPACE
           job_cluster_key: ml_job_cluster  
       job_clusters:
