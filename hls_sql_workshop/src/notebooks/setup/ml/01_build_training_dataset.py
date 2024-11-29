@@ -90,7 +90,7 @@ print(f'catalog = {catalog}')
 # MAGIC SELECT
 # MAGIC     a.beneficiary_code,
 # MAGIC     CASE WHEN a.date_of_death IS NULL THEN 0 ELSE 1 END AS deceased_flag,
-# MAGIC     CASE WHEN a.gender = 'No' THEN 0 ELSE 1 END AS gender,
+# MAGIC     a.gender,
 # MAGIC     a.race,
 # MAGIC     CASE WHEN a.esrd_flag = 'No' THEN 0 ELSE 1 END AS esrd_flag,
 # MAGIC     a.state,

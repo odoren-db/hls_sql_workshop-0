@@ -25,7 +25,7 @@ print(f"""
 blob = "wasbs://cmsdata@hlssqlworkshopsa.blob.core.windows.net/"
 
 # define folders to check if exist
-folders_to_check = ['beneficiary_summary', 'carrier_claims', 'date', 'icd_codes', 'inpatient_claims', 'lookups', 'npi_code', 'outpatient_claims', 'prescription_drug_events']
+folders_to_check = ['beneficiary_summary', 'carrier_claims', 'date', 'icd_codes', 'inpatient_claims', 'lookup', 'npi_code', 'outpatient_claims', 'prescription_drug_events']
 
 # check if folders already exist in volume. If not, copy the data over
 for folder in folders_to_check:

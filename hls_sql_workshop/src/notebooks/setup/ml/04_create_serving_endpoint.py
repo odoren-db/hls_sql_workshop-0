@@ -4,6 +4,15 @@ catalog = dbutils.widgets.get('catalog')
 print(f'catalog = {catalog}')
 
 # COMMAND ----------
+%pip install mlflow
+# COMMAND ----------
+
+from mlflow.tracking import MlflowClient
+model_version_infos = MlflowClient().search_model_versions(f"name = '{catalog}.ai.predict_claims_amount_model'")
+latest_model_version = max([int(model_version_info.version) for model_version_info in model_version_infos])
+print(f'Latest model version: {latest_model_version}')
+
+# COMMAND ----------
 
 from mlflow.deployments import get_deploy_client
 
@@ -18,7 +27,7 @@ try:
                 {
                     "name": "predict_claims_amount_entity",
                     "entity_name": f"{catalog}.ai.predict_claims_amount_model",
-                    "entity_version": "1",
+                    "entity_version": f"{latest_model_version}",
                     "workload_size": "Small",
                     "scale_to_zero_enabled": True
                 }
