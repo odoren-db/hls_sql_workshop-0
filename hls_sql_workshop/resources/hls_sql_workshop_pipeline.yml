@@ -9,7 +9,7 @@ resources:
         bundle.sourcePath: /Workspace/${workspace.file_path}/src
       libraries:
         - notebook:
-            path: ../src/dlt/01_bronze_load_tables.py
+            path: ../src/dlt/01_bronze_load_tables.ipynb
         - notebook:
             path: ../src/dlt/02_silver_load_tables.sql
         - notebook:
