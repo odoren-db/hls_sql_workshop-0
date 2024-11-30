@@ -23,7 +23,7 @@ dbutils.widgets.text("catalog", "ddavis_hls_sql")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.text("dlt_pipeline_id", "", "DLT Pipeline ID deployed to create the bronze, silver, gold tables")
-dbutils.widgets.dropdown("compute_type", "serverless", ["serverless"])
+dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])
 dbutils.widgets.text("node_type_id", "m7gd.2xlarge")
 
 # COMMAND ----------
@@ -183,10 +183,6 @@ copy_files_to_volume = Task(
   )
   ,webhook_notifications = WebhookNotifications()
 )
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
@@ -409,19 +405,10 @@ print(f"Job created successfully. Job ID: {j.job_id}")
 
 # COMMAND ----------
 
-# DBTITLE 1,get job url
-host = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().getOrElse(None)
-job_url = f'{host}/jobs/{j.job_id}'
-print(f'Job can be found at: {job_url}')
-
-# COMMAND ----------
-
-# DBTITLE 1,Notebook Exit with Job Status
 import json
 
 dbutils.notebook.exit(json.dumps({
   "status": "OK",
   "job": j.as_dict(),
-  "job_name": job_name,
-  "job_url": job_url
+  "job_name": job_name
 }))

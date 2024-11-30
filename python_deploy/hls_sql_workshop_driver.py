@@ -6,9 +6,10 @@
 # MAGIC ### To setup the workshop, please follow these instructions:
 # MAGIC   1. **FIRST** execute the first 1 cell after this initial documentation cell which will create the widgets for the setup.
 # MAGIC   2. **SECOND** enter values for the widgets above.
-# MAGIC       - It is recommended to leave the schema and volume as their default values unless absolutely required.
-# MAGIC       - It is recommebded to set **compute_type == serverless** unless your workspace requires classic compute.
-# MAGIC       - The catalog, schema, and volume names that you select will be automatically created in the generated workflow, provided you have the appropriate permissions to create these objects.
+# MAGIC       -  CATALOG: The name of the catalog that all objects will be created under. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
+# MAGIC       -  SCHEMA: The name of the schema that the DLT objects and the Volume will be created under. It is recommended to leave the schema and volume as their default values unless absolutely required. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
+# MAGIC       - VOLUME: The name of the volume that will be created and that the CMS files will copied into. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
+# MAGIC       - COMPUTE_TYPE: This is very important! This is the type of compute you would like the workflow tasks and DLT pipeline to use. This should be based off what your workspace allows. It is recommended to set **compute_type == serverless** unless your workspace requires classic compute.
 # MAGIC   3. **THIRD** execute this notebook. Once it executes successfully, it will generate a workflow that will: 
 # MAGIC         - setup UC (e.g. catalog, schemas, etc.) 
 # MAGIC         - copy CMS files to your volume
@@ -16,11 +17,13 @@
 # MAGIC         - train and register an ML model
 # MAGIC         - create an online table
 # MAGIC         - create a serving endpoint
-# MAGIC   4. **FOURTH** once this notebook finishes executing, **you will need to manually run the workflow that it generates**. The name of the workflow will be in the format *\<first_name>_\<last_name>_hls_sql_workshop*. 
+# MAGIC   4. **FOURTH** once this notebook finishes executing, **you will need to manually run the workflow that it generates**. The last cell output will contain the workflow name, ID, and a link to the workflow. 
 # MAGIC   The name of the workflow, ID, and URL can be found in the output of the last cell.
 # MAGIC   5. **FIFTH** Once your workflow executes successfully, your dataset will be ready to run the HLS SQL Workshop.
 # MAGIC
-# MAGIC <img src="https://github.com/ddavisdbrx/hls_sql_workshop/blob/main/python_deploy/img/workflow_cell_output.jpg?raw=true" width="200"/>
+# MAGIC
+# MAGIC
+# MAGIC <img src="https://github.com/ddavisdbrx/hls_sql_workshop/blob/main/python_deploy/img/workflow_link.jpg?raw=true" width="200"/>
 # MAGIC
 # MAGIC
 # MAGIC If you run into any issues, please contact Dan Davis (dan.davis@databricks.com)
@@ -79,13 +82,34 @@ print(f'Node type ID: {node_type_id}')
 # COMMAND ----------
 
 # DBTITLE 1,Generate DLT
-pipeline_id = dbutils.notebook.run("./setup/generate_dlt", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema})
-print(f'DLT Pipeline ID: {pipeline_id}')
+import json
+result = dbutils.notebook.run("./setup/generate_dlt", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema})
+pipeline_details = json.loads(result)
+print(pipeline_details)
+
+# COMMAND ----------
+
+print(f"""
+      DLT Pipeline Name: {pipeline_details['DLT Pipeline Name']}
+      DLT Pipeline ID: {pipeline_details['DLT Pipeline ID']}
+      """)
+
+url = f"/pipelines/{pipeline_details['DLT Pipeline ID']}"
+displayHTML(f"<h1><a href={url}>Your DLT Pipeline can be found here!</a></h1>")
 
 # COMMAND ----------
 
 # DBTITLE 1,Generate Workflow
-import json
 result = dbutils.notebook.run("./setup/generate_workflow", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema, "compute_type": compute_type, "node_type_id": node_type_id, "dlt_pipeline_id": pipeline_id})
-workflow_url= json.loads(result)
-print(workflow_url)
+workflow_details = json.loads(result)
+print(workflow_details)
+
+# COMMAND ----------
+
+print(f"""
+      Workflow Name: {workflow_details['job']['job_id']}
+      Workflow ID: {workflow_details['job_name']}
+      """)
+
+url = f"/#job/{workflow_details['job']['job_id']}"
+displayHTML(f"<h1><a href={url}>Your Workflow can be found here!</a></h1>")

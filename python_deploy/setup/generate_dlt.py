@@ -113,4 +113,9 @@ if pipeline_id == '' or pipeline_id == None:
 
 # COMMAND ----------
 
-dbutils.notebook.exit(created_pipeline_id)
+import json
+dbutils.notebook.exit(json.dumps({
+  "status": "OK",
+  "DLT Pipeline ID": created_pipeline_id,
+  "DLT Pipeline Name": pipeline_name,
+}))
