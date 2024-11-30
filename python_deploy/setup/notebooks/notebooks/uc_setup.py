@@ -44,8 +44,8 @@ print(f"""
 # DBTITLE 1,create, use, and check schema
 # MAGIC %sql
 # MAGIC --create, use, and check schema
-# MAGIC create schema if not exists ${catalog};
-# MAGIC use schema ${catalog};
+# MAGIC create schema if not exists ${schema};
+# MAGIC use schema ${schema};
 # MAGIC select current_schema();
 
 # COMMAND ----------

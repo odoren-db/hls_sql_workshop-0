@@ -6,10 +6,10 @@
 # MAGIC ### To setup the workshop, please follow these instructions:
 # MAGIC   1. **FIRST** execute the first 1 cell after this initial documentation cell which will create the widgets for the setup.
 # MAGIC   2. **SECOND** enter values for the widgets above.
-# MAGIC       -  CATALOG: The name of the catalog that all objects will be created under. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
-# MAGIC       -  SCHEMA: The name of the schema that the DLT objects and the Volume will be created under. It is recommended to leave the schema and volume as their default values unless absolutely required. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
-# MAGIC       - VOLUME: The name of the volume that will be created and that the CMS files will copied into. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
-# MAGIC       - COMPUTE_TYPE: This is very important! This is the type of compute you would like the workflow tasks and DLT pipeline to use. This should be based off what your workspace allows. It is recommended to set **compute_type == serverless** unless your workspace requires classic compute.
+# MAGIC       -  **CATALOG**: The name of the catalog that all objects will be created under. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. _It is recommended to leave the catalog name as the default value so that screenshots in the user instructions match what is seen in the environment._ This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. This will create the volume using default storage.
+# MAGIC       -  **SCHEMA**: The name of the schema that the DLT objects and the Volume will be created under. _It is recommended to leave the schema as the default value so that screenshots in the user instructions match what is seen in the environment_. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. This will create the schema using default storage.
+# MAGIC       - **VOLUME**: The name of the volume that will be created and that the CMS files will copied into. _It is recommended to leave the schema as the default value so that screenshots in the user instructions match what is seen in the environment_. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
+# MAGIC       - **COMPUTE_TYPE**: This is very important! This is the type of compute you would like the workflow tasks and DLT pipeline to use. This should be based off what your workspace allows. It is recommended to set **compute_type == serverless** unless your workspace requires classic compute.
 # MAGIC   3. **THIRD** execute this notebook. Once it executes successfully, it will generate a workflow that will: 
 # MAGIC         - setup UC (e.g. catalog, schemas, etc.) 
 # MAGIC         - copy CMS files to your volume
@@ -17,13 +17,25 @@
 # MAGIC         - train and register an ML model
 # MAGIC         - create an online table
 # MAGIC         - create a serving endpoint
-# MAGIC   4. **FOURTH** once this notebook finishes executing, **you will need to manually run the workflow that it generates**. The last cell output will contain the workflow name, ID, and a link to the workflow. 
-# MAGIC   The name of the workflow, ID, and URL can be found in the output of the last cell.
+# MAGIC   4. **FOURTH** once this notebook finishes executing, **you will need to manually run the workflow that it generates**. The last cell output will contain all of the configuration details and a link to the workflow to execute.
 # MAGIC   5. **FIFTH** Once your workflow executes successfully, your dataset will be ready to run the HLS SQL Workshop.
 # MAGIC
+# MAGIC ** **IMPORTANT** **
 # MAGIC
+# MAGIC - Everytime you execute this notebook, it will **DROP** the existing DLT pipeline and create a new one. It will also drop the existing workflow and create a new one. This means that the existing  bronze/silver/gold tables created by the original DLT pipeline will need to be fully refreshed, which can take up to 1 hour.
 # MAGIC
-# MAGIC <img src="https://github.com/ddavisdbrx/hls_sql_workshop/blob/main/python_deploy/img/workflow_link.jpg?raw=true" width="200"/>
+# MAGIC - The contents of this workshop are not designed to be deployed multiple times in the same workspace. The names of objects created are not unique, and certain objects will not replace existing objects.
+# MAGIC   - EXAMPLE: The serving endpoint (name: predict_claims_amount) will not be recreated/updated when running this multiple times unless it is manually deleted.
+# MAGIC
+# MAGIC - The workflow that is generated will run a notebook called **uc_setup** that will grant the workflow owner (the user that executed this notebook) `ALL PRIVILEGES` on the volume that is created
+# MAGIC
+# MAGIC - The workflow that is generated will run a notebook called **uc_setup** that will grant `All account users` the following permissions on the catalog that is created:
+# MAGIC   - `BROWSE`
+# MAGIC   - `EXECUTE`
+# MAGIC   - `READ VOLUME`
+# MAGIC   - `SELECT`
+# MAGIC   - `USE CATALOG`
+# MAGIC   - `USE SCHEMA`
 # MAGIC
 # MAGIC
 # MAGIC If you run into any issues, please contact Dan Davis (dan.davis@databricks.com)
@@ -81,35 +93,72 @@ print(f'Node type ID: {node_type_id}')
 
 # COMMAND ----------
 
+# DBTITLE 1,Config settings
+config = {
+  "Catalog": catalog,
+  "Schema": schema,
+  "Volume": volume,
+  "Compute_Type": compute_type,
+  "Node_Type_ID": node_type_id
+}
+
+def print_config(dict):
+  print('Config Settings:')
+  for key, value in dict.items():
+      print(f" {key}: {value}")
+
+print_config(config)      
+
+# COMMAND ----------
+
 # DBTITLE 1,Generate DLT
 import json
-result = dbutils.notebook.run("./setup/generate_dlt", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema})
+
+# run generate_dlt notebook
+result = dbutils.notebook.run("./setup/generate_dlt", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema, "volume": volume})
+
+# get notebook outputs
 pipeline_details = json.loads(result)
+pipeline_id = pipeline_details['DLT Pipeline ID']
+pipeline_name = pipeline_details['DLT Pipeline Name']
+
+# add values to config settings
+config['DLT Pipeline ID'] = pipeline_id
+config['DLT Pipeline Name'] = pipeline_name
 print(pipeline_details)
 
 # COMMAND ----------
 
-print(f"""
-      DLT Pipeline Name: {pipeline_details['DLT Pipeline Name']}
-      DLT Pipeline ID: {pipeline_details['DLT Pipeline ID']}
-      """)
+# DBTITLE 1,print config and show DLT pipeline
+# print config settings
+print_config(config)
 
-url = f"/pipelines/{pipeline_details['DLT Pipeline ID']}"
+# show dlt pipeline link
+url = f"/pipelines/{pipeline_id}"
 displayHTML(f"<h1><a href={url}>Your DLT Pipeline can be found here!</a></h1>")
 
 # COMMAND ----------
 
 # DBTITLE 1,Generate Workflow
+# run generate_workflow notebook
 result = dbutils.notebook.run("./setup/generate_workflow", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema, "compute_type": compute_type, "node_type_id": node_type_id, "dlt_pipeline_id": pipeline_id})
+
+# get notebook outputs
 workflow_details = json.loads(result)
+workflow_name = workflow_details['job']['job_id']
+workflow_id = workflow_details['job_name']
+
+# add values to config settings
+config['Workflow ID'] = pipeline_id
+config['Workflow Name'] = pipeline_name
 print(workflow_details)
 
 # COMMAND ----------
 
-print(f"""
-      Workflow Name: {workflow_details['job']['job_id']}
-      Workflow ID: {workflow_details['job_name']}
-      """)
+# DBTITLE 1,print config and show workflow
+# print config settings
+print_config(config)
 
+# show workflow link
 url = f"/#job/{workflow_details['job']['job_id']}"
-displayHTML(f"<h1><a href={url}>Your Workflow can be found here!</a></h1>")
+displayHTML(f"<h1><a href={url}>Your Workflow can be found here. You will need to execute it manually to complete setup!</a></h1>")

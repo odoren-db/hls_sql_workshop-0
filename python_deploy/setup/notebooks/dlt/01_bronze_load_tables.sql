@@ -7,7 +7,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/beneficiary_summary/", 'parquet')
+FROM cloud_files("${volume_path}/beneficiary_summary/", 'parquet')
 
 -- COMMAND ----------
 
@@ -19,7 +19,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/carrier_claims/", 'parquet')
+FROM cloud_files("${volume_path}/carrier_claims/", 'parquet')
 
 -- COMMAND ----------
 
@@ -31,7 +31,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/inpatient_claims/", 'parquet')
+FROM cloud_files("${volume_path}/inpatient_claims/", 'parquet')
 
 -- COMMAND ----------
 
@@ -43,7 +43,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/outpatient_claims/", 'parquet')
+FROM cloud_files("${volume_path}/outpatient_claims/", 'parquet')
 
 -- COMMAND ----------
 
@@ -55,7 +55,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/prescription_drug_events/", 'parquet')
+FROM cloud_files("${volume_path}/prescription_drug_events/", 'parquet')
 
 -- COMMAND ----------
 
@@ -67,7 +67,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/icd_codes/", 'parquet')
+FROM cloud_files("${volume_path}/icd_codes/", 'parquet')
 
 -- COMMAND ----------
 
@@ -79,7 +79,7 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/npi_code/", 'parquet')
+FROM cloud_files("${volume_path}/npi_code/", 'parquet')
 
 
 -- COMMAND ----------
@@ -92,5 +92,5 @@ SELECT
   ,current_timestamp as load_timestamp
   ,current_timestamp as update_timestamp
   ,_metadata
-FROM cloud_files("${pipeline.volume_path}/lookup/", 'parquet')
+FROM cloud_files("${volume_path}/lookup/", 'parquet')
 

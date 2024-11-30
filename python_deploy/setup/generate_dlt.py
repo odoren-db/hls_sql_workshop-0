@@ -2,6 +2,7 @@
 # create widgets
 dbutils.widgets.text('catalog', 'ddavis_hls_sql')
 dbutils.widgets.text('schema', 'cms')
+dbutils.widgets.text('volume', 'raw_files')
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless","classic"])
 
 # COMMAND ----------
@@ -10,12 +11,16 @@ dbutils.widgets.dropdown("compute_type", "serverless", ["serverless","classic"])
 catalog = dbutils.widgets.get(name = "catalog")
 schema = dbutils.widgets.get(name = "schema")
 compute_type = dbutils.widgets.get(name = "compute_type")
+volume = dbutils.widgets.get(name = "volume")
+volume_path = f'/Volumes/{catalog}/{schema}/{volume}/medicare_claims'
 
 # print values
 print(f"""
   catalog = {catalog}
   schema = {schema}
   compute_type = {compute_type}
+  volume = {volume}
+  volume_path = {volume_path}
 """)
 
 # COMMAND ----------
@@ -81,7 +86,8 @@ def create_pipeline(catalog, schema):
         channel="CURRENT",
         photon=True,
         catalog=f'{catalog}',
-        target=f'{schema}'
+        target=f'{schema}',
+        configuration={"volume_path": f"{volume_path}"}
             )
     return created.pipeline_id
 

@@ -96,7 +96,7 @@ STORED AS
 CREATE LIVE TABLE gold_dim_date
 AS
 SELECT * 
-FROM read_files('${pipeline.volume_path}/date/DimDate.csv',
+FROM read_files('${volume_path}/date/DimDate.csv',
   format => 'csv',
   header => true)
 where year in (2008,2009,2010)
