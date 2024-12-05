@@ -13,11 +13,11 @@ Please reach out to Dan Davis (dan.davis@databricks.com) if you have any questio
 This guide explores how Databricks' Data Intelligence Platform transforms modern data operations with its powerful Data Warehousing capabilities. It demonstrates ingesting claims data from CMS using Databricks Workflows, highlighting the platform’s scalability, flexibility, and cost efficiency for large-scale data processing.
 
 Key features include:
-  - Databricks SQL: Databricks SQL is the intelligent data warehouse. Built with DatabricksIQ, the Data Intelligence Engine that understands the uniqueness of your data, Databricks SQL democratizes analytics for technical and business users alik
-  - Unity Catalog: A unified governance solution for data and AI assets on Databricks that provides centralized access control, auditing, lineage, and data discovery capabilities across Databricks.
-  - DatabricksIQ: Data Intelligence Engine that uses AI to power all parts of the Databricks Data Intelligence Platform. It uses signals across your entire Databricks environment, including Unity Catalog, dashboards, notebooks, data pipelines and documentation to create highly specialized and accurate generative AI models that understand your data, your usage patterns and your business terminology.
-  - AI/BI Dashboards: Easy-to-create, shareable dashboards built on governed data to drive informed decision-making across teams.
-  - Genie Feature: Natural language interaction with data, simplifying access and democratizing data usage within organizations.
+  - **Databricks SQL**: Databricks SQL is the intelligent data warehouse. Built with DatabricksIQ, the Data Intelligence Engine that understands the uniqueness of your data, Databricks SQL democratizes analytics for technical and business users alik
+  - **Unity Catalog**: A unified governance solution for data and AI assets on Databricks that provides centralized access control, auditing, lineage, and data discovery capabilities across Databricks.
+  - **DatabricksIQ**: Data Intelligence Engine that uses AI to power all parts of the Databricks Data Intelligence Platform. It uses signals across your entire Databricks environment, including Unity Catalog, dashboards, notebooks, data pipelines and documentation to create highly specialized and accurate generative AI models that understand your data, your usage patterns and your business terminology.
+  - **AI/BI Dashboards**: Easy-to-create, shareable dashboards built on governed data to drive informed decision-making across teams.
+  - **Genie Feature**: Natural language interaction with data, simplifying access and democratizing data usage within organizations.
 
 The workshop showcases how Databricks enables efficient, governed, and accessible data management for enterprise-grade solutions.
 
