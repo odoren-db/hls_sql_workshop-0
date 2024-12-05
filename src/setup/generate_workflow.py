@@ -141,10 +141,10 @@ Compute_type = {compute_type}
 # task 0: uc_setup
 uc_setup = Task(
   task_key = "uc_setup"
-  ,description = "Check to see if the synthea jar and configuration files have been set up"
+  ,description = "Create UC objects for hls SQL workshop"
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/uc_setup"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/uc_setup"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -160,17 +160,42 @@ uc_setup = Task(
 
 # COMMAND ----------
 
+# DBTITLE 1,create_sql_warehouse
+# task 1: create_sql_warehouse
+create_sql_warehouse = Task(
+  task_key = "create_sql_warehouse"
+  ,description = "Create serverless sql warehouse"
+  ,depends_on = [TaskDependency(
+    task_key = "uc_setup"
+  )]  
+  ,job_cluster_key = job_cluster_key
+  ,notebook_task = NotebookTask(
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/create_sql_warehouse"
+    ,source = Source("WORKSPACE")
+    ,base_parameters = dict("")
+  )
+  ,timeout_seconds = 0
+  ,email_notifications = TaskEmailNotifications()
+  ,notification_settings = TaskNotificationSettings(
+    no_alert_for_skipped_runs = False
+    ,no_alert_for_canceled_runs = False
+    ,alert_on_last_attempt = False
+  )
+  ,webhook_notifications = WebhookNotifications()
+
+# COMMAND ----------
+
 # DBTITLE 1,Result Conditional Task
-# task 1: copy_files_to_volume
+# task 2: copy_files_to_volume
 copy_files_to_volume = Task(
   task_key = "copy_files_to_volume"
   ,depends_on = [TaskDependency(
     task_key = "uc_setup"
   )]
-  ,run_if = RunIf("ALL_SUCCESS")
+  ,run_if = RunIf("ALL_DONE")
   ,job_cluster_key = job_cluster_key  
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/copy_files_to_volume"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/copy_files_to_volume"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -220,7 +245,7 @@ copy_gold_tables_add_metadata = Task(
   ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/gold_copy_tables_add_metadata"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/gold_copy_tables_add_metadata"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -246,7 +271,7 @@ build_feature_store_beneficiary = Task(
   ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/01_build_training_dataset"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/ml/01_build_training_dataset"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -272,7 +297,7 @@ ml_train_and_register_model = Task(
   ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/02_ml_train_and_register_model"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/ml/02_ml_train_and_register_model"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -295,10 +320,10 @@ create_online_table = Task(
   ,depends_on = [TaskDependency(
     task_key = "ml_train_and_register_model"
   )]
-  ,run_if = RunIf("AT_LEAST_ONE_SUCCESS")
+  ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key  
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/03_create_online_table"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/ml/03_create_online_table"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -321,10 +346,10 @@ create_serving_endpoint = Task(
   ,depends_on = [TaskDependency(
     task_key = "create_online_table"
   )]
-  ,run_if = RunIf("AT_LEAST_ONE_SUCCESS")
+  ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key  
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/04_create_serving_endpoint"
+    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/python_deploy/setup/notebooks/notebooks/ml/04_create_serving_endpoint"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
