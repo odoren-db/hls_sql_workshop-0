@@ -1,5 +1,3 @@
-## THIS DOCUMENT IS A WORK IN PRORGRESS. ##
-
 # HLS SQL Workshop on Databricks
 
 The HLS SQL Workshop on Databricks is an implementation of specifications derived from the TPC-DI Benchmark.
