@@ -33,6 +33,14 @@ In order to properly setup and successfully run the workshop, there are several 
 - Access to GitHub via public internet access.
 - Access to Serverless compute or compute using Databricks Runtime **14.3 LTS**
 - Unity Catalog enabled.  
+
+## [IMPORTANT NOTES](#important-notes)
+The contents of this workshop **are not** designed to be deployed multiple times in the same workspace. This is intended. 
+
+The names of objects created are not unique, and certain objects will not replace existing objects.
+
+- **Example**: The serving endpoint (name: predict_claims_amount) will not be recreated/updated when deploying this multiple times unless it is manually deleted.
+
 # Workshop Setup
 Follow the steps below to setup your environment for the workshop.
 
@@ -161,19 +169,20 @@ At the time of writing, Genie Rooms are not able to be created programmatically,
 
 > ### STEP 1: Create Genie Space
 
-Go to **Genie -> New ** and create the Genie Space using the setting below: 
+Go to **Genie -> New** and create the Genie Space using the setting below: 
 Title: CMS Genie Space
-**Description:**
-**Default Warehouse: ** SQL_Warehouse_Serverless_Warehouse 
+- **Description:**
+- **Default Warehouse:** SQL_Warehouse_Serverless_Warehouse 
 This was the warehouse created by the workflow during setup. If it was not created during setup, please select the name of the warehouse you created manually in previous steps.
-**Tables:** Select all tables from the gold schema
-- dim_beneficiary
-- dim_date
-- dim_diagnosis
-- dim_provider
-- fact_carrier_claims
-- fact_patient_claims
-- fact_prescription_drug_events
+- **Tables:** Select all tables from the gold schema
+  - dim_beneficiary
+  - dim_date
+  - dim_diagnosis
+  - dim_provider
+  - fact_carrier_claims
+  - fact_patient_claims
+  - fact_prescription_drug_events
+
 **Sample Questions:**
 - What is the total number of claims submitted in a given year?
 - Who are the top 5 beneficiaries by claims submitted?
