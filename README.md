@@ -4,7 +4,10 @@ The repository is can be used for setting up the Healthcare & Life Sciences SQL 
 
 We suggest executing any of the workflows and DLT using Serverless compute. If Serverless compute is not available, we suggest using the Databricks Runtime **14.3 LTS** or higher. 
 
-The step-by-step user instructions for conducting the workshop once it has been deployed [can be found here](https://docs.google.com/document/d/10Y3YNEf33ljEU3IqPLsb78c5_2EEMgTyoXj03L80xlA/edit?usp=drive_link).
+**Workshop Materials**
+- The step-by-step user instructions for conducting the workshop once it has been deployed [can be found here](https://docs.google.com/document/d/10Y3YNEf33ljEU3IqPLsb78c5_2EEMgTyoXj03L80xlA/edit?usp=drive_link).
+
+- Additional collateral for the workshop [can be found here](https://drive.google.com/drive/folders/1DB4zRLcpRSrbElX8crQ99ALseVrlgAMb?usp=drive_link).
 
 Please reach out to Dan Davis (dan.davis@databricks.com) if you have any questions.
 
