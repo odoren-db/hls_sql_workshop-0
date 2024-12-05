@@ -395,6 +395,7 @@ j = w.jobs.create(
   ,description = job_description
   ,tasks = [
     uc_setup
+    ,create_sql_warehouse
     ,copy_files_to_volume
     ,dlt_etl
     ,copy_gold_tables_add_metadata
