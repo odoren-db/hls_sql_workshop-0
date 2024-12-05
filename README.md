@@ -25,7 +25,7 @@ The workshop showcases how Databricks enables efficient, governed, and accessibl
 In order to properly setup and successfully run the workshop, there are several prerequisites:
 - The code base is implemented to execute successfully ONLY on the Databricks platform (GCP, AZURE, OR AWS).
 - Databricks E2 Deployment
-- [**Workspace for the Workshop**](#workspace-for-the-workshop)
+- Workspace for the Workshop
 <br>There are several preferred options for running this workshop. Please work with your account team to decide which method is best for your customer
   - Run the workshop in a CloudLabs environment.
   - Run the workshop in a Databricks Express environment.
