@@ -24,6 +24,10 @@ Key features include:
 
 The workshop showcases how Databricks enables efficient, governed, and accessible data management for enterprise-grade solutions.
 
+### Dataset
+The dataset used in this workshop is from the [CMS 2008-2010 Data Entrepreneurs’ Synthetic Public Use File (DE-SynPUF)](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf). The DE-SynPUF was created with the goal of providing a realistic set of claims data in the public domain while providing the very highest degree of protection to the Medicare beneficiaries’ protected health information.
+
+
 ## [Prerequisites](#prerequisites)
 In order to properly setup and successfully run the workshop, there are several prerequisites:
 - The code base is implemented to execute successfully ONLY on the Databricks platform (GCP, AZURE, OR AWS).
