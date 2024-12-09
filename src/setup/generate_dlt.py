@@ -35,7 +35,10 @@ from databricks.sdk.service.pipelines import PipelineCluster
 w = WorkspaceClient()
 current_user = w.current_user.me()
 user_name = current_user.user_name
-current_user_full_name = current_user.name.given_name.lower() + '_' + current_user.name.family_name.lower()
+try:
+    current_user_full_name = current_user.name.given_name.lower() + '_' + current_user.name.family_name.lower()
+except:
+    current_user_full_name = current_user.display_name.lower().split('@')[0].replace('.', '_').replace(' ', '_')
 print(f'Current user full name: {current_user_full_name}')
 print(f'User name: {user_name}')
 

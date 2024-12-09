@@ -82,7 +82,10 @@ current_user = w.current_user.me()
 # DBTITLE 1,Synthetic Data Deneration Job Inputs
 current_user = w.current_user.me()
 user_name = current_user.user_name
-current_user_full_name = current_user.name.given_name.lower() + '_' + current_user.name.family_name.lower()
+try:
+    current_user_full_name = current_user.name.given_name.lower() + '_' + current_user.name.family_name.lower()
+except:
+    current_user_full_name = current_user.display_name.lower().split('@')[0].replace('.', '_').replace(' ', '_')
 
 job_name = current_user_full_name + "_hls_sql_workshop"
 job_cluster_key = current_user_full_name + "_hls_sql_workshop"
