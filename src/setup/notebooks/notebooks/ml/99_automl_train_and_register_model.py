@@ -16,7 +16,7 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog", 'ddavis_hls_sql')
+dbutils.widgets.text("catalog", 'hls_sql_workshop')
 
 # COMMAND ----------
 
@@ -63,7 +63,7 @@ excluded_columns
 
 feature_lookups = [
     {
-        "table_name": "ddavis_hls_sql.ai.feature_beneficiary",
+        "table_name": "hls_sql_workshop.ai.feature_beneficiary",
         "lookup_key": ["beneficiary_code"]
     }
 ]

@@ -19,7 +19,7 @@ import json
 # COMMAND ----------
 
 # DBTITLE 1,Set Databricks Widgets
-dbutils.widgets.text("catalog", "ddavis_hls_sql")
+dbutils.widgets.text("catalog", "hls_sql_workshop")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.text("dlt_pipeline_id", "", "DLT Pipeline ID deployed to create the bronze, silver, gold tables")

@@ -1,5 +1,5 @@
 # Databricks notebook source
-dbutils.widgets.text('catalog','ddavis_hls_sql')
+dbutils.widgets.text('catalog','hls_sql_workshop')
 catalog = dbutils.widgets.get('catalog')
 print(f'catalog = {catalog}')
 

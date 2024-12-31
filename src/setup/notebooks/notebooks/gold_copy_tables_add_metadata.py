@@ -1,6 +1,6 @@
 # Databricks notebook source
 # create widgets
-dbutils.widgets.text('catalog', 'ddavis_hls_sql')
+dbutils.widgets.text('catalog', 'hls_sql_workshop')
 dbutils.widgets.text('schema', 'cms')
 
 # assign widget value to variable
