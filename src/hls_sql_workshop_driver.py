@@ -44,7 +44,7 @@
 
 # DBTITLE 1,Set Databricks Widgets
 # define widgets
-dbutils.widgets.text("catalog", "ddavis_hls_sql")
+dbutils.widgets.text("catalog", "hls_sql_workshop")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])

@@ -19,7 +19,7 @@ import json
 # COMMAND ----------
 
 # DBTITLE 1,Set Databricks Widgets
-dbutils.widgets.text("catalog", "ddavis_hls_sql")
+dbutils.widgets.text("catalog", "hls_sql_workshop")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.text("dlt_pipeline_id", "", "DLT Pipeline ID deployed to create the bronze, silver, gold tables")
@@ -63,7 +63,7 @@ from databricks.sdk.service.compute import ClusterSpec, DataSecurityMode, Runtim
 # COMMAND ----------
 
 # DBTITLE 1,Import Databricks SDK Job and Task Configuration Modules
-from databricks.sdk.service.jobs import Source, Task, NotebookTask, TaskEmailNotifications, TaskNotificationSettings, WebhookNotifications, RunIf, QueueSettings, JobParameter, JobRunAs,TaskDependency, ConditionTask, ConditionTaskOp, PipelineTask, JobCluster
+from databricks.sdk.service.jobs import Source, Task, NotebookTask, TaskEmailNotifications, TaskNotificationSettings, WebhookNotifications, RunIf, QueueSettings, JobParameter, JobRunAs,TaskDependency, ConditionTask, ConditionTaskOp, PipelineTask, JobCluster, PipelineParams
 
 # COMMAND ----------
 
@@ -215,6 +215,10 @@ copy_files_to_volume = Task(
 
 # COMMAND ----------
 
+help(Task)
+
+# COMMAND ----------
+
 # DBTITLE 1,Unity Catalog Setup Task
 # task 3: dlt_etl
 dlt_etl = Task(
@@ -225,7 +229,7 @@ dlt_etl = Task(
   ,run_if = RunIf("ALL_SUCCESS")
   ,pipeline_task = PipelineTask(
     pipeline_id = f"{dlt_pipeline_id}"
-    ,full_refresh="false"
+    ,full_refresh=True
   )
   ,timeout_seconds = 0
   ,email_notifications = TaskEmailNotifications()
@@ -429,6 +433,7 @@ j = w.jobs.create(
   ,run_as = JobRunAs(
     user_name = user_name
   )
+  ,tags = {'project': 'hls_sql_workshop'}
 )
 
 print(f"Job created successfully. Job ID: {j.job_id}")

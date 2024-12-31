@@ -113,6 +113,7 @@ AS
 SELECT
    oc.claim_id
   ,db.beneficiary_key
+  ,db.beneficiary_code
   ,'Outpatient' as claim_type
   ,md5(oc.attending_physician_npi) as attending_physician_provider_key
   ,md5(oc.operating_physician_npi) as operating_physician_provider_key
@@ -142,6 +143,7 @@ LEFT JOIN live.gold_dim_beneficiary db on oc.beneficiary_code = db.beneficiary_c
 UNION SELECT
    ic.claim_id
   ,db.beneficiary_key
+  ,db.beneficiary_code
   ,'Inpatient' as claim_type
   ,md5(ic.attending_physician_npi) as attending_physician_provider_key
   ,md5(ic.operating_physician_npi) as operating_physician_provider_key
