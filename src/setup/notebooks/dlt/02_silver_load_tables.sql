@@ -14,24 +14,25 @@ SELECT
     ,to_date(bs.BENE_DEATH_DT,'yyyyMMdd') as date_of_death
     ,cast(l_BENE_SEX_IDENT_CD.label as string) as gender
     ,cast(l_BENE_RACE_CD.label as string) as race
-    ,CASE WHEN BENE_ESRD_IND = 'Y' THEN 'Yes' ELSE 'No' END as esrd_flag
+    ,CASE WHEN to_date(bs.BENE_DEATH_DT,'yyyyMMdd') IS NULL THEN 0 ELSE 1 END as deceased_flag
+    ,CASE WHEN BENE_ESRD_IND = 'Y' THEN 1 ELSE 0 END as esrd_flag
     ,cast(l_SP_STATE_CODE.label as string) as state
     ,bs.BENE_COUNTY_CD as county_code
     ,cast(bs.BENE_HI_CVRAGE_TOT_MONS as int) as part_a_coverage_months
     ,cast(bs.BENE_SMI_CVRAGE_TOT_MONS as int) as part_b_coverage_months
     ,cast(bs.BENE_HMO_CVRAGE_TOT_MONS as int) as hmo_coverage_months
     ,cast(bs.PLAN_CVRG_MOS_NUM as int) as part_d_coverage_months
-    ,cast(l_SP_ALZHDMTA.label as string) as alzheimers_or_related_flag
-    ,cast(l_SP_CHF.label as string) as heart_failure_flag
-    ,cast(l_SP_CHRNKIDN.label as string) as cronic_kidney_disease_flag
-    ,cast(l_SP_CNCR.label as string) as cancer_flag
-    ,cast(l_SP_COPD.label as string) as copd_flag
-    ,cast(l_SP_DEPRESSN.label as string) as depression_flag
-    ,cast(l_SP_DIABETES.label as string) as diabetes_flag
-    ,cast(l_SP_ISCHMCHT.label as string) as ischemic_heart_disease_flag
-    ,cast(l_SP_OSTEOPRS.label as string) as osteoporosis_flag
-    ,cast(l_SP_RA_OA.label as string) asrheumatoid_arthritis_flag
-    ,cast(l_SP_STRKETIA.label as string) as stroke_transient_ischemic_attack_flag
+    ,CASE WHEN l_SP_ALZHDMTA.label = 'Y' THEN 1 ELSE 0 END as alzheimers_or_related_flag
+    ,CASE WHEN l_SP_CHF.label = 'Y' THEN 1 ELSE 0 END as heart_failure_flag
+    ,CASE WHEN l_SP_CHRNKIDN.label = 'Y' THEN 1 ELSE 0 END as cronic_kidney_disease_flag
+    ,CASE WHEN l_SP_CNCR.label = 'Y' THEN 1 ELSE 0 END as cancer_flag
+    ,CASE WHEN l_SP_COPD.label = 'Y' THEN 1 ELSE 0 END as copd_flag
+    ,CASE WHEN l_SP_DEPRESSN.label = 'Y' THEN 1 ELSE 0 END as depression_flag
+    ,CASE WHEN l_SP_DIABETES.label = 'Y' THEN 1 ELSE 0 END as diabetes_flag
+    ,CASE WHEN l_SP_ISCHMCHT.label = 'Y' THEN 1 ELSE 0 END as ischemic_heart_disease_flag
+    ,CASE WHEN l_SP_OSTEOPRS.label = 'Y' THEN 1 ELSE 0 END as osteoporosis_flag
+    ,CASE WHEN l_SP_RA_OA.label = 'Y' THEN 1 ELSE 0 END as rheumatoid_arthritis_flag
+    ,CASE WHEN l_SP_STRKETIA.label = 'Y' THEN 1 ELSE 0 END as stroke_transient_ischemic_attack_flag
     ,cast(MEDREIMB_IP as double) as inpatient_annual_medicare_reimbursement_amount
     ,cast(BENRES_IP as double) as inpatient_annual_beneficiary_responsibility_amount
     ,cast(PPPYMT_IP as double) as inpatient_annual_payer_reimbursement_amount

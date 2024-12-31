@@ -44,7 +44,7 @@ print(f'catalog = {catalog}')
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC use catalog ${catalog};
+# MAGIC USE CATALOG ${catalog};
 
 # COMMAND ----------
 
@@ -83,7 +83,7 @@ df_train = training_set.load_df().toPandas()
 columns_to_convert = [
     "deceased_flag", "esrd_flag", "heart_failure_flag", "cronic_kidney_disease_flag", "cancer_flag", 
     "copd_flag", "depression_flag", "diabetes_flag", "ischemic_heart_disease_flag", 
-    "osteoporosis_flag", "asrheumatoid_arthritis_flag", "stroke_transient_ischemic_attack_flag"
+    "osteoporosis_flag"
 ]
 
 X = df_train.drop("claim_amount", axis=1)
@@ -94,7 +94,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Preprocessing
 #date_cols = ["date_of_birth", "date_of_death"]
-boolean_cols = ["deceased_flag", "esrd_flag", "heart_failure_flag", "cronic_kidney_disease_flag", "cancer_flag", "copd_flag", "depression_flag", "diabetes_flag", "ischemic_heart_disease_flag", "osteoporosis_flag", "asrheumatoid_arthritis_flag", "stroke_transient_ischemic_attack_flag"]
+boolean_cols = ["deceased_flag", "esrd_flag", "heart_failure_flag", "cronic_kidney_disease_flag", "cancer_flag", "copd_flag", "depression_flag", "diabetes_flag", "ischemic_heart_disease_flag", "osteoporosis_flag"]
 low_cardinality_cols = ["gender", "race", "state", "county_code"]
 
 # Updated column groups after date preprocessing
@@ -150,29 +150,33 @@ signature = infer_signature(input_sample, model.predict(input_sample))
 
 with mlflow.start_run(run_name='hls_sql_claims_amount') as run:
     # Log model
-    mlflow.sklearn.log_model(model, "model", signature=signature)
-    
-    # Log metrics
-    mlflow.log_metric("mse", mse)
-    mlflow.log_metric("mae", mae)
-    mlflow.log_metric("r2", r2)
-
-    # Log parameters (e.g., model type and hyperparameters)
-    mlflow.log_param("model_type", "RandomForestRegressor")
-    mlflow.log_param("random_state", 42)
+    fe.log_model(
+        model=model,
+        artifact_path="predict_claims_amount_model",
+        flavor=mlflow.sklearn,
+        training_set=training_set,
+        signature=signature,
+        registered_model_name=f'{catalog}.ai.predict_claims_amount_model'
+  )
 
     print(f"Run ID: {mlflow.active_run().info.run_id}")
 
 # COMMAND ----------
 
-# DBTITLE 1,register model
-# register_model
 model_name = f'{catalog}.ai.predict_claims_amount_model'
 run_id = run.info.run_id
 model_uri = f"runs:/{run_id}/model"
-model_registered = mlflow.register_model(model_uri=model_uri, name=model_name)
+print(model_uri)
+
+# COMMAND ----------
+
+# DBTITLE 1,set registered model alias
+# get latest model version
+model_name = f'{catalog}.ai.predict_claims_amount_model'
+client = mlflow.tracking.MlflowClient()
+model_version_infos = client.search_model_versions(f"name = '{model_name}'")
+latest_model_version = max([model_version_info.version for model_version_info in model_version_infos])
 
 # move the model in production
-client = mlflow.tracking.MlflowClient()
-print("registering model version "+model_registered.version+" as production model")
-client.set_registered_model_alias(model_name, "Production", model_registered.version)
+print(f"registering model version {model_name}.{latest_model_version} as production model")
+client.set_registered_model_alias(model_name, "Production", latest_model_version)

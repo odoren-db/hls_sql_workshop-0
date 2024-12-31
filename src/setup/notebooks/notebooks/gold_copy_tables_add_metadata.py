@@ -116,19 +116,87 @@ spark.sql(f'USE SCHEMA {schema}')
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC -- add fact_patient_claims comment
 # MAGIC COMMENT ON TABLE
 # MAGIC gold.fact_patient_claims 
 # MAGIC IS
 # MAGIC "The 'fact_patient_claims' table contains information about healthcare claims, including the beneficiary, claim type, attending and operating physicians, and associated diagnoses and procedures. This data can be used to analyze healthcare costs, identify high-cost procedures, and track the performance of physicians and healthcare providers. It can also help in identifying trends in healthcare utilization and diagnoses, and in understanding the impact of different payers on healthcare costs.";
 # MAGIC
-# MAGIC ALTER TABLE gold.fact_patient_claims SET TAGS ('certified')
-
-# COMMAND ----------
-
-# MAGIC %sql
+# MAGIC ALTER TABLE gold.fact_patient_claims SET TAGS ('certified');
+# MAGIC
+# MAGIC -- add fact_carrier_claims comment
 # MAGIC COMMENT ON TABLE
 # MAGIC gold.fact_carrier_claims 
 # MAGIC IS
 # MAGIC "The 'fact_carrier_claims' table contains information about medical claims made by beneficiaries. It includes details such as the start and end dates of the claim, the diagnoses, and the providers involved. This data can be used to analyze claim patterns, diagnoses, and providers, which can help in identifying trends and potential areas for improvement in healthcare services. It can also be used to assess the effectiveness of different treatments and providers, and to identify potential fraudulent claims.";
 # MAGIC
-# MAGIC ALTER TABLE gold.fact_patient_claims SET TAGS ('certified')
+# MAGIC ALTER TABLE gold.fact_patient_claims SET TAGS ('certified');
+# MAGIC
+# MAGIC
+# MAGIC -- add dim_diagnosis comments
+# MAGIC COMMENT ON TABLE
+# MAGIC gold.dim_diagnosis
+# MAGIC IS
+# MAGIC "The 'dim_diagnosis' table contains information about medical diagnoses. It includes details such as the diagnosis code, long and short descriptions. This data can be used to support medical diagnosis and treatment decisions, as well as for tracking and analyzing trends in medical diagnoses. It can also be used to improve the accuracy of medical diagnoses and to identify potential areas for further research or improvement in medical diagnosis and treatment.";
+# MAGIC
+# MAGIC ALTER TABLE gold.dim_diagnosis SET TAGS ('certified');
+
+# COMMAND ----------
+
+# DBTITLE 1,add column comments
+# MAGIC %sql
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN claim_key COMMENT 'Unique identifier for the claim, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN claim_id COMMENT 'Identifier for the claim, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN beneficiary_key COMMENT 'Identifier for the beneficiary, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN claim_start_date COMMENT 'The start date of the claim, indicating when the claim period begins.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN claim_end_date COMMENT 'The end date of the claim, indicating when the claim period ends.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_diagnosis_key COMMENT 'Identifier for the main diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_1 COMMENT 'Identifier for the first additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_2 COMMENT 'Identifier for the second additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_3 COMMENT 'Identifier for the third additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_4 COMMENT 'Identifier for the fourth additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_5 COMMENT 'Identifier for the fifth additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_6 COMMENT 'Identifier for the sixth additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_7 COMMENT 'Identifier for the seventh additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN diagnosis_key_8 COMMENT 'Identifier for the eighth additional diagnosis, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN provider_key_1 COMMENT 'Identifier for the first provider, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN provider_key_2 COMMENT 'Identifier for the second provider, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN provider_key_3 COMMENT 'Identifier for the third provider, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN provider_key_4 COMMENT 'Identifier for the fourth provider, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN provider_key_5 COMMENT 'Identifier for the fifth provider, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN claim_days COMMENT 'The number of days the claim is active, indicating the duration of the claim period.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_number COMMENT 'Unique identifier for each claim line, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN nch_payment_amount COMMENT 'Represents the amount paid by the non-contracted health system (NCHS) for the claim.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_beneficiary_part_b_deductable_amount COMMENT 'Represents the amount the beneficiary is responsible for paying after the deductible is met.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_beneficiary_primary_payer_paid_amount COMMENT 'Represents the amount paid by the primary payer for the claim.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_coinsurance_amount COMMENT 'Represents the amount the beneficiary is responsible for paying after the primary payer has paid their portion.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_allowed_charge_amount COMMENT 'Represents the allowed charge for the claim, which is the maximum amount the payer will reimburse.';
+# MAGIC ALTER TABLE gold.fact_carrier_claims ALTER COLUMN line_processing_indicator_code COMMENT 'Represents the processing indicator code for the claim, which can be used to identify and categorize claims.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_id COMMENT 'Unique identifier for each claim, allowing easy reference and tracking.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN beneficiary_key COMMENT 'Identifier for the patient, allowing tracking of claims for individual patients.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN beneficiary_code COMMENT 'Code associated with the patient, providing a human-readable label for identification.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_type COMMENT 'Represents the type of claim, such as inpatient, outpatient, or emergency.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN attending_physician_provider_key COMMENT 'Identifier for the attending physician, allowing tracking of claims for individual physicians.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN operating_physician_provider_key COMMENT 'Identifier for the operating physician, allowing tracking of claims for individual physicians.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN other_physician_provider_key COMMENT 'Identifier for any other physicians involved in the claim, allowing tracking of claims for individual physicians.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_line_segment COMMENT 'Represents the line or segment of the claim, allowing tracking of individual components of a claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_start_date COMMENT 'The date when the claim period begins.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_end_date COMMENT 'The date when the claim period ends.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN inpatient_admission_date COMMENT 'The date when the patient was admitted to the hospital, if applicable.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN claim_payment_amount COMMENT 'Represents the total amount paid for the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN primary_payer_claim_paid_amount COMMENT 'Represents the amount paid by the primary payer for the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN diagnosis_key_1 COMMENT 'Identifier for the first diagnosis associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN diagnosis_key_2 COMMENT 'Identifier for the second diagnosis associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN diagnosis_key_3 COMMENT 'Identifier for the third diagnosis associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN diagnosis_key_4 COMMENT 'Identifier for the fourth diagnosis associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN diagnosis_key_5 COMMENT 'Identifier for the fifth diagnosis associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN procedure_key_1 COMMENT 'Identifier for the first procedure associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN procedure_key_2 COMMENT 'Identifier for the second procedure associated with the claim.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN procedure_key_3 COMMENT 'Unique identifier for the medical procedure, allowing for easy tracking and reference.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN procedure_key_4 COMMENT 'Additional unique identifier for the medical procedure, providing further distinction and organization.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN procedure_key_5 COMMENT 'Another unique identifier for the medical procedure, ensuring proper categorization and distinction.';
+# MAGIC ALTER TABLE gold.fact_patient_claims ALTER COLUMN admitting_key_1 COMMENT 'Identifier for the patients admission, linking the medical procedure to the patients hospital stay.';
+# MAGIC ALTER TABLE gold.dim_diagnosis ALTER COLUMN diagnosis_key COMMENT 'Unique identifier for each diagnosis, allowing easy reference and distinction between different diagnoses.';
+# MAGIC ALTER TABLE gold.dim_diagnosis ALTER COLUMN diagnosis_code COMMENT 'A short, alphanumeric code used to represent the diagnosis in a standardized manner.';
+# MAGIC ALTER TABLE gold.dim_diagnosis ALTER COLUMN diagnosis_long_description COMMENT 'A detailed description of the diagnosis, providing context and additional information.';
+# MAGIC ALTER TABLE gold.dim_diagnosis ALTER COLUMN diagnosis_short_description COMMENT 'A concise summary of the diagnosis, allowing quick and easy understanding of the condition.';
