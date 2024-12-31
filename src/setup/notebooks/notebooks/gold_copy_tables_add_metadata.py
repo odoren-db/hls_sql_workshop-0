@@ -109,6 +109,40 @@ spark.sql(f'USE SCHEMA {schema}')
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC -- create report table for ai/bi dashboard
+# MAGIC CREATE OR REPLACE TABLE gold.rpt_patient_claims AS
+# MAGIC SELECT
+# MAGIC   a.claim_type,
+# MAGIC   a.claim_start_date,
+# MAGIC   b.gender,
+# MAGIC   b.race,
+# MAGIC   b.deceased_flag,
+# MAGIC   b.state,
+# MAGIC   b.county_code,
+# MAGIC   b.esrd_flag,
+# MAGIC   b.cancer_flag,
+# MAGIC   b.heart_failure_flag,
+# MAGIC   b.copd_flag,
+# MAGIC   b.depression_flag,
+# MAGIC   b.diabetes_flag,
+# MAGIC   b.ischemic_heart_disease_flag,
+# MAGIC   b.osteoporosis_flag,
+# MAGIC   b.rheumatoid_arthritis_flag,
+# MAGIC   b.stroke_transient_ischemic_attack_flag,
+# MAGIC   c.diagnosis_short_description,
+# MAGIC   d.provider_organization_name,
+# MAGIC   d.entity_type,
+# MAGIC   sum(a.claim_payment_amount) as claim_payment_amount,
+# MAGIC   sum(a.primary_payer_claim_paid_amount) as primary_payer_claim_paid_amount
+# MAGIC  FROM gold.fact_patient_claims a
+# MAGIC  INNER JOIN gold.dim_beneficiary b ON a.beneficiary_key = b.beneficiary_key
+# MAGIC  INNER JOIN gold.dim_diagnosis c ON a.diagnosis_key_1 = c.diagnosis_key
+# MAGIC  INNER JOIN gold.dim_provider d on a.attending_physician_provider_key = d.provider_key
+# MAGIC  GROUP BY ALL;
+
+# COMMAND ----------
+
+# MAGIC %sql
 # MAGIC CREATE OR REPLACE FUNCTION gold.get_age(start_date date) 
 # MAGIC RETURNS INT
 # MAGIC RETURN FLOOR(DATEDIFF('2015-12-31', start_date) / 365.25);
