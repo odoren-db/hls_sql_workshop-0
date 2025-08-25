@@ -3,7 +3,7 @@
 # MAGIC # Welcome to the HLS SQL Workshop on Databricks!
 # MAGIC ## Please refer to the README for additional documentation
 # MAGIC
-# MAGIC ### To setup the workshop, please follow these instructions:
+# MAGIC ### To setup the load the CMS dataset, please follow these instructions:
 # MAGIC   1. **FIRST** execute the first 1 cell after this initial documentation cell which will create the widgets for the setup.
 # MAGIC   2. **SECOND** enter values for the widgets above.
 # MAGIC       -  **CATALOG**: The name of the catalog that all objects will be created under. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. _It is recommended to leave the catalog name as the default value so that screenshots in the user instructions match what is seen in the environment._ This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. This will create the volume using default storage.
@@ -14,9 +14,9 @@
 # MAGIC         - setup UC (e.g. catalog, schemas, etc.) 
 # MAGIC         - copy CMS files to your volume
 # MAGIC         - create and execute the DLT pipeline that creates the bronze/silver/gold tables
-# MAGIC         - train and register an ML model
-# MAGIC         - create an online table
-# MAGIC         - create a serving endpoint
+# MAGIC         - ~~train and register an ML model~~
+# MAGIC         - ~~create an online table~~
+# MAGIC         - ~~create a serving endpoint~~
 # MAGIC   4. **FOURTH** once this notebook finishes executing, **you will need to manually run the workflow that it generates**. The last cell output will contain all of the configuration details and a link to the workflow to execute.
 # MAGIC   5. **FIFTH** Once your workflow executes successfully, your dataset will be ready to run the HLS SQL Workshop.
 # MAGIC
@@ -44,7 +44,7 @@
 
 # DBTITLE 1,Set Databricks Widgets
 # define widgets
-dbutils.widgets.text("catalog", "hls_sql_workshop")
+dbutils.widgets.text("catalog", "")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])

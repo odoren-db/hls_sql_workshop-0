@@ -1,6 +1,6 @@
 # Databricks notebook source
 # create widgets
-dbutils.widgets.text('catalog', 'hls_sql_workshop')
+dbutils.widgets.text('catalog', '')
 dbutils.widgets.text('schema', 'cms')
 dbutils.widgets.text('volume', 'raw_files')
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless","classic"])
@@ -44,8 +44,14 @@ print(f'User name: {user_name}')
 
 # COMMAND ----------
 
+notebook_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+parent_folder = "/".join(notebook_path.split("/")[:-1])
+parent_folder
+
+# COMMAND ----------
+
 # DBTITLE 1,set notebook paths
-notebook_path = f"/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/dlt/"
+notebook_path = f"{parent_folder}/setup/notebooks/dlt/"
 
 bronze_path = notebook_path + "01_bronze_load_tables"
 silver_path = notebook_path + "02_silver_load_tables"
@@ -54,7 +60,7 @@ gold_path = notebook_path + "03_gold_load_tables"
 # COMMAND ----------
 
 # define pipeline name
-pipeline_name = current_user_full_name +'_hls_sql_workshop'
+pipeline_name = current_user_full_name +'_cms_load_dataset'
 
 # COMMAND ----------
 

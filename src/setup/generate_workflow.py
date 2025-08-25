@@ -79,6 +79,12 @@ current_user = w.current_user.me()
 
 # COMMAND ----------
 
+notebook_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+parent_folder = "/".join(notebook_path.split("/")[:-1])
+parent_folder
+
+# COMMAND ----------
+
 # DBTITLE 1,Synthetic Data Deneration Job Inputs
 current_user = w.current_user.me()
 user_name = current_user.user_name
@@ -87,9 +93,9 @@ try:
 except:
     current_user_full_name = current_user.display_name.lower().split('@')[0].replace('.', '_').replace(' ', '_')
 
-job_name = current_user_full_name + "_hls_sql_workshop"
-job_cluster_key = current_user_full_name + "_hls_sql_workshop"
-job_description = f"Job to generate the HLS SQL Workshop"
+job_name = current_user_full_name + "_cms_load_dataset"
+job_cluster_key = current_user_full_name + "_cms_load_dataset"
+job_description = f"Job to generate CMS dataset"
 
 # COMMAND ----------
 
@@ -147,7 +153,7 @@ uc_setup = Task(
   ,description = "Create UC objects for hls SQL workshop"
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/uc_setup"
+    notebook_path = f"/Workspace{parent_folder}/notebooks/notebooks/uc_setup"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -164,28 +170,28 @@ uc_setup = Task(
 # COMMAND ----------
 
 # DBTITLE 1,create_sql_warehouse
-# task 1: create_sql_warehouse
-create_sql_warehouse = Task(
-  task_key = "create_sql_warehouse"
-  ,description = "Create serverless sql warehouse"
-  ,depends_on = [TaskDependency(
-    task_key = "uc_setup"
-  )]  
-  ,job_cluster_key = job_cluster_key
-  ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/create_sql_warehouse"
-    ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
-  )
-  ,timeout_seconds = 0
-  ,email_notifications = TaskEmailNotifications()
-  ,notification_settings = TaskNotificationSettings(
-    no_alert_for_skipped_runs = False
-    ,no_alert_for_canceled_runs = False
-    ,alert_on_last_attempt = False
-  )
-  ,webhook_notifications = WebhookNotifications()
-)
+# # task 1: create_sql_warehouse
+# create_sql_warehouse = Task(
+#   task_key = "create_sql_warehouse"
+#   ,description = "Create serverless sql warehouse"
+#   ,depends_on = [TaskDependency(
+#     task_key = "uc_setup"
+#   )]  
+#   ,job_cluster_key = job_cluster_key
+#   ,notebook_task = NotebookTask(
+#     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/create_sql_warehouse"
+#     ,source = Source("WORKSPACE")
+#     ,base_parameters = dict("")
+#   )
+#   ,timeout_seconds = 0
+#   ,email_notifications = TaskEmailNotifications()
+#   ,notification_settings = TaskNotificationSettings(
+#     no_alert_for_skipped_runs = False
+#     ,no_alert_for_canceled_runs = False
+#     ,alert_on_last_attempt = False
+#   )
+#   ,webhook_notifications = WebhookNotifications()
+# )
 
 # COMMAND ----------
 
@@ -199,7 +205,7 @@ copy_files_to_volume = Task(
   ,run_if = RunIf("ALL_DONE")
   ,job_cluster_key = job_cluster_key  
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/copy_files_to_volume"
+    notebook_path = f"/Workspace{parent_folder}/notebooks/notebooks/copy_files_to_volume"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -253,7 +259,7 @@ copy_gold_tables_add_metadata = Task(
   ,run_if = RunIf("ALL_SUCCESS")
   ,job_cluster_key = job_cluster_key
   ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/gold_copy_tables_add_metadata"
+    notebook_path = f"/Workspace{parent_folder}/notebooks/notebooks/gold_copy_tables_add_metadata"
     ,source = Source("WORKSPACE")
     ,base_parameters = dict("")
   )
@@ -270,106 +276,106 @@ copy_gold_tables_add_metadata = Task(
 # COMMAND ----------
 
 # DBTITLE 1,build_feature_store_beneficiary
-# task 5: build_feature_store_beneficiary
-build_feature_store_beneficiary = Task(
-  task_key = "build_feature_store_beneficiary"
-  ,depends_on = [TaskDependency(
-    task_key = "copy_gold_tables_add_metadata"
-  )]
-  ,run_if = RunIf("ALL_SUCCESS")
-  ,job_cluster_key = job_cluster_key
-  ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/01_build_training_dataset"
-    ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
-  )
-  ,timeout_seconds = 0
-  ,email_notifications = TaskEmailNotifications()
-  ,notification_settings = TaskNotificationSettings(
-    no_alert_for_skipped_runs = False
-    ,no_alert_for_canceled_runs = False
-    ,alert_on_last_attempt = False
-  )
-  ,webhook_notifications = WebhookNotifications()
-)
+# # task 5: build_feature_store_beneficiary
+# build_feature_store_beneficiary = Task(
+#   task_key = "build_feature_store_beneficiary"
+#   ,depends_on = [TaskDependency(
+#     task_key = "copy_gold_tables_add_metadata"
+#   )]
+#   ,run_if = RunIf("ALL_SUCCESS")
+#   ,job_cluster_key = job_cluster_key
+#   ,notebook_task = NotebookTask(
+#     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/01_build_training_dataset"
+#     ,source = Source("WORKSPACE")
+#     ,base_parameters = dict("")
+#   )
+#   ,timeout_seconds = 0
+#   ,email_notifications = TaskEmailNotifications()
+#   ,notification_settings = TaskNotificationSettings(
+#     no_alert_for_skipped_runs = False
+#     ,no_alert_for_canceled_runs = False
+#     ,alert_on_last_attempt = False
+#   )
+#   ,webhook_notifications = WebhookNotifications()
+# )
 
 # COMMAND ----------
 
 # DBTITLE 1,ml_train_and_register_model
-# task 6: ml_train_and_register_model
-ml_train_and_register_model = Task(
-  task_key = "ml_train_and_register_model"
-  ,depends_on = [TaskDependency(
-    task_key = "build_feature_store_beneficiary"
-  )]
-  ,run_if = RunIf("ALL_SUCCESS")
-  ,job_cluster_key = job_cluster_key
-  ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/02_ml_train_and_register_model"
-    ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
-  )
-  ,timeout_seconds = 0
-  ,email_notifications = TaskEmailNotifications()
-  ,notification_settings = TaskNotificationSettings(
-    no_alert_for_skipped_runs = False
-    ,no_alert_for_canceled_runs = False
-    ,alert_on_last_attempt = False
-  )
-  ,webhook_notifications = WebhookNotifications()
-)
+# # task 6: ml_train_and_register_model
+# ml_train_and_register_model = Task(
+#   task_key = "ml_train_and_register_model"
+#   ,depends_on = [TaskDependency(
+#     task_key = "build_feature_store_beneficiary"
+#   )]
+#   ,run_if = RunIf("ALL_SUCCESS")
+#   ,job_cluster_key = job_cluster_key
+#   ,notebook_task = NotebookTask(
+#     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/02_ml_train_and_register_model"
+#     ,source = Source("WORKSPACE")
+#     ,base_parameters = dict("")
+#   )
+#   ,timeout_seconds = 0
+#   ,email_notifications = TaskEmailNotifications()
+#   ,notification_settings = TaskNotificationSettings(
+#     no_alert_for_skipped_runs = False
+#     ,no_alert_for_canceled_runs = False
+#     ,alert_on_last_attempt = False
+#   )
+#   ,webhook_notifications = WebhookNotifications()
+# )
 
 # COMMAND ----------
 
 # DBTITLE 1,create_online_table
-# task 7: create_online_table
-create_online_table = Task(
-  task_key = "create_online_table"
-  ,depends_on = [TaskDependency(
-    task_key = "ml_train_and_register_model"
-  )]
-  ,run_if = RunIf("ALL_SUCCESS")
-  ,job_cluster_key = job_cluster_key  
-  ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/03_create_online_table"
-    ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
-  )
-  ,timeout_seconds = 0
-  ,email_notifications = TaskEmailNotifications()
-  ,notification_settings = TaskNotificationSettings(
-    no_alert_for_skipped_runs = False
-    ,no_alert_for_canceled_runs = False
-    ,alert_on_last_attempt = False
-  )
-  ,webhook_notifications = WebhookNotifications()
-)
+# # task 7: create_online_table
+# create_online_table = Task(
+#   task_key = "create_online_table"
+#   ,depends_on = [TaskDependency(
+#     task_key = "ml_train_and_register_model"
+#   )]
+#   ,run_if = RunIf("ALL_SUCCESS")
+#   ,job_cluster_key = job_cluster_key  
+#   ,notebook_task = NotebookTask(
+#     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/03_create_online_table"
+#     ,source = Source("WORKSPACE")
+#     ,base_parameters = dict("")
+#   )
+#   ,timeout_seconds = 0
+#   ,email_notifications = TaskEmailNotifications()
+#   ,notification_settings = TaskNotificationSettings(
+#     no_alert_for_skipped_runs = False
+#     ,no_alert_for_canceled_runs = False
+#     ,alert_on_last_attempt = False
+#   )
+#   ,webhook_notifications = WebhookNotifications()
+# )
 
 # COMMAND ----------
 
 # DBTITLE 1,create_serving_endpoint
-# task 8: create_serving_endpoint
-create_serving_endpoint = Task(
-  task_key = "create_serving_endpoint"
-  ,depends_on = [TaskDependency(
-    task_key = "create_online_table"
-  )]
-  ,run_if = RunIf("ALL_SUCCESS")
-  ,job_cluster_key = job_cluster_key  
-  ,notebook_task = NotebookTask(
-    notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/04_create_serving_endpoint"
-    ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
-  )
-  ,timeout_seconds = 0
-  ,email_notifications = TaskEmailNotifications()
-  ,notification_settings = TaskNotificationSettings(
-    no_alert_for_skipped_runs = False
-    ,no_alert_for_canceled_runs = False
-    ,alert_on_last_attempt = False
-  )
-  ,webhook_notifications = WebhookNotifications()
-)
+# # task 8: create_serving_endpoint
+# create_serving_endpoint = Task(
+#   task_key = "create_serving_endpoint"
+#   ,depends_on = [TaskDependency(
+#     task_key = "create_online_table"
+#   )]
+#   ,run_if = RunIf("ALL_SUCCESS")
+#   ,job_cluster_key = job_cluster_key  
+#   ,notebook_task = NotebookTask(
+#     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/ml/04_create_serving_endpoint"
+#     ,source = Source("WORKSPACE")
+#     ,base_parameters = dict("")
+#   )
+#   ,timeout_seconds = 0
+#   ,email_notifications = TaskEmailNotifications()
+#   ,notification_settings = TaskNotificationSettings(
+#     no_alert_for_skipped_runs = False
+#     ,no_alert_for_canceled_runs = False
+#     ,alert_on_last_attempt = False
+#   )
+#   ,webhook_notifications = WebhookNotifications()
+# )
 
 # COMMAND ----------
 
@@ -402,14 +408,14 @@ j = w.jobs.create(
   ,description = job_description
   ,tasks = [
     uc_setup
-    ,create_sql_warehouse
+    # ,create_sql_warehouse
     ,copy_files_to_volume
     ,dlt_etl
     ,copy_gold_tables_add_metadata
-    ,build_feature_store_beneficiary
-    ,create_online_table
-    ,ml_train_and_register_model 
-    ,create_serving_endpoint
+    # ,build_feature_store_beneficiary
+    # ,create_online_table
+    # ,ml_train_and_register_model 
+    # ,create_serving_endpoint
   ]
   ,job_clusters = cluster_spec
   ,queue = QueueSettings(enabled = True)
