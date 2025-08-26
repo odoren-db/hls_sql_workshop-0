@@ -51,7 +51,7 @@ parent_folder
 # COMMAND ----------
 
 # DBTITLE 1,set notebook paths
-notebook_path = f"{parent_folder}/setup/notebooks/dlt/"
+notebook_path = f"{parent_folder}/notebooks/dlt/"
 
 bronze_path = notebook_path + "01_bronze_load_tables"
 silver_path = notebook_path + "02_silver_load_tables"

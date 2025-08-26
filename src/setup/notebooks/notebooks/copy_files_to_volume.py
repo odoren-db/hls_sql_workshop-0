@@ -22,7 +22,7 @@ print(f"""
 # COMMAND ----------
 
 # define source location of data, which is blob storage
-blob = "wasbs://cmsdata@hlssqlworkshopsa.blob.core.windows.net/"
+blob = "abfss://cmsdata@oneenvadls.dfs.core.windows.net/"
 
 # define folders to check if exist
 folders_to_check = ['beneficiary_summary', 'carrier_claims', 'date', 'icd_codes', 'inpatient_claims', 'lookup', 'npi_code', 'outpatient_claims', 'prescription_drug_events']
